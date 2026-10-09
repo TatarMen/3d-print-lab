@@ -1,3 +1,2 @@
-// Укажите публичный числовой ID счётчика MyTracker, выданный сервисом.
-// НЕ размещайте здесь API-ключи, токены и другие секреты.
-window.__MYTRACKER_COUNTER_ID__ = '';
+// Public web-counter ID from MyTracker. Do not put secret keys or access tokens here.
+window.__MYTRACKER_COUNTER_ID__ = '3800742';
