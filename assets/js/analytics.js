@@ -1,6 +1,5 @@
 /* 3D Print Lab · Аналитика. Реальные счетчики активируются ТОЛЬКО после согласия.
-   В integrations/*.html вставьте коды, полученные в личных кабинетах сервисов.
-   Ни один счетчик не выдуман и не активен до установки настоящего кода. */
+   LiveInternet и Rambler загружаются здесь; MyTracker запускается из HEAD после согласия. */
 (() => {
   'use strict';
   const KEY = '3dpl.analyticsConsent.v1';
@@ -8,7 +7,7 @@
   let installed = false;
   let consent = null;
   const banner = document.getElementById('consent-banner');
-  const integrations = ['liveinternet', 'rambler', 'mytracker'];
+  const integrations = ['liveinternet', 'rambler'];
   const asset = name => `./integrations/${name}.html`;
 
   function makeExecutable(fragment, target) {
@@ -50,10 +49,16 @@
   function setConsent(state) {
     if (!valid.has(state)) return;
     try { localStorage.setItem(KEY, state); } catch (_) { /* Хранилище может быть недоступно */ }
+    const previousConsent = consent;
     consent = state;
     if (banner) banner.hidden = true;
-    if (state === 'accepted') installCounters();
-    else if (installed) { location.reload(); } // Счётчики могут быть отключены только перезагрузкой
+    if (state === 'accepted') {
+      // После первого согласия перезагружаем страницу: MyTracker должен стартовать в HEAD.
+      if (previousConsent !== 'accepted') { location.reload(); return; }
+      installCounters();
+    } else if (installed || previousConsent === 'accepted') {
+      location.reload(); // Полностью прекращаем работу ранее загруженных счётчиков.
+    }
   }
 
   function emit(name, params = {}) {
@@ -74,7 +79,9 @@
     // Задайте СВОЙ id в integrations/mytracker-config.js (не секретный ключ!).
     const id = window.__MYTRACKER_COUNTER_ID__;
     if (id && Array.isArray(window._tmr)) {
-      window._tmr.push({ id: String(id), type: 'reachGoal', goal: name, params: safe });
+      // MyTracker custom goal names may contain only Latin letters and digits.
+      const myTrackerGoal = name.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase());
+      window._tmr.push({ id: String(id), type: 'reachGoal', goal: myTrackerGoal, params: safe });
     }
     // Рамблер/Топ-100: параметры визитов (документация help.rambler.ru/top100/poleznye_materialy/1713).
     // Параметр отражает ДЕЙСТВИТЕЛЬНО выполненное действие на странице.
