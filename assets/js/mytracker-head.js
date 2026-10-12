@@ -6,6 +6,7 @@
   var consent = false;
   try { consent = w.localStorage.getItem('3dpl.analyticsConsent.v1') === 'accepted'; }
   catch (_) { consent = false; }
+  w.__3dplMyTrackerLoadStatus = consent ? 'loading' : 'no_consent';
   if (!consent) return;
   var _tmr = w._tmr || (w._tmr = []);
   _tmr.push({ id: '3800742', type: 'pageView', start: (new Date()).getTime() });
@@ -15,6 +16,8 @@
   ts.async = true;
   ts.id = 'tmr-code';
   ts.src = 'https://top-fwz1.mail.ru/js/code.js';
+  ts.onload = function () { w.__3dplMyTrackerLoadStatus = 'loaded'; };
+  ts.onerror = function () { w.__3dplMyTrackerLoadStatus = 'error'; };
   var first = d.getElementsByTagName('script')[0];
   first.parentNode.insertBefore(ts, first);
 })(document, window);
