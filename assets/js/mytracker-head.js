@@ -14,7 +14,7 @@
   ts.type = 'text/javascript';
   ts.async = true;
   ts.id = 'tmr-code';
-  ts.src = 'https://mytopf.com/js/code.js';
+  ts.src = 'https://top-fwz1.mail.ru/js/code.js';
   var first = d.getElementsByTagName('script')[0];
   first.parentNode.insertBefore(ts, first);
 })(document, window);
